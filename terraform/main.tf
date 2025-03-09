@@ -1,5 +1,6 @@
 
 provider "azurerm" {
+  subscription_id = var.subscription_id
   features {}
 }
 
@@ -48,3 +49,4 @@ module "aks" {
   docker_bridge_cidr  = var.docker_bridge_cidr
   tags                = var.tags
 }
+
