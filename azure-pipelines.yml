@@ -1,39 +1,30 @@
-
 trigger:
 - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  - group: 'AzureDevOpsVariables'
+steps:
+- task: AzureCLI@2
+  displayName: 'Login to Azure'
+  inputs:
+    azureSubscription: 'your-azure-service-connection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Retrieving Subscription ID..."
+      echo "##vso[task.setvariable variable=TF_VAR_subscription_id]$(az account show --query id -o tsv)"
 
-stages:
-- stage: Deploy
-  jobs:
-  - job: Terraform
-    steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.x'
-        addToPath: true
+- task: TerraformInstaller@0
+  displayName: 'Install Terraform'
+  inputs:
+    version: '1.5.0'
 
-    - script: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-      displayName: 'Install dependencies'
+- script: terraform init
+  displayName: 'Terraform Init'
 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'AzureServiceConnection'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az account set --subscription $(subscriptionId)
-          az aks get-credentials --resource-group $(resourceGroupName) --name $(aksClusterName)
+- script: terraform plan
+  displayName: 'Terraform Plan'
 
-    - script: |
-        terraform init
-        terraform plan -out=tfplan
-        terraform apply -auto-approve tfplan
-      displayName: 'Run Terraform'
+- script: terraform apply -auto-approve
+  displayName: 'Terraform Apply'
