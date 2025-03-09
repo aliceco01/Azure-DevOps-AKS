@@ -1,0 +1,39 @@
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: 'AzureDevOpsVariables'
+
+stages:
+- stage: Deploy
+  jobs:
+  - job: Terraform
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+      displayName: 'Install dependencies'
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'AzureServiceConnection'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az account set --subscription $(subscriptionId)
+          az aks get-credentials --resource-group $(resourceGroupName) --name $(aksClusterName)
+
+    - script: |
+        terraform init
+        terraform plan -out=tfplan
+        terraform apply -auto-approve tfplan
+      displayName: 'Run Terraform'
