@@ -61,7 +61,7 @@ variable "dns_prefix" {
 variable "node_count" {
   description = "The number of nodes in the default node pool"
   type        = number
-  default     = 3
+  default     = 1
 }
 
 variable "vm_size" {
