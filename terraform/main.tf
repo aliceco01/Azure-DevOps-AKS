@@ -59,6 +59,22 @@ module "aks" {
 }
 
 
+# NGINX Ingress Controller Helm Release
+resource "helm_release" "nginx_ingress" {
+  name       = "nginx-ingress"
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  chart      = "ingress-nginx"
+  namespace  = "ingress-nginx"
+
+  create_namespace = true
+
+  values = [
+    file("helm-values.yaml")  # This is where we reference your helm-values.yaml
+  ]
+}
+
+
+
 output "kube_config" {
   value = module.aks.kube_config
 }
