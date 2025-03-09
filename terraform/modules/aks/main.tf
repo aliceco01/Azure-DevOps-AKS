@@ -1,9 +1,9 @@
-
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.cluster_name
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix          = var.dns_prefix
+  private_cluster_enabled = true
 
   default_node_pool {
     name       = "default"
@@ -22,10 +22,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     dns_service_ip    = var.dns_service_ip
   }
 
-
   tags = var.tags
 }
 
 output "kube_config" {
-  value = azurerm_kubernetes_cluster.aks.kube_config_raw
+  value = {
+    host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
+    client_certificate     = azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate
+    client_key             = azurerm_kubernetes_cluster.aks.kube_config.0.client_key
+    cluster_ca_certificate = azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate
+  }
 }
