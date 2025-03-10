@@ -1,80 +1,73 @@
 provider "azurerm" {
-  subscription_id = var.subscription_id
+  subscription_id = var.subscription_id  # Ensure this is defined in variables.tf
   features {}
 }
 
-provider "helm" {
-  kubernetes {
-    host                   = module.aks.kube_config["host"]
-    client_certificate     = base64decode(module.aks.kube_config["client_certificate"])
-    client_key             = base64decode(module.aks.kube_config["client_key"])
-    cluster_ca_certificate = base64decode(module.aks.kube_config["cluster_ca_certificate"])
-  }
-}
-
+# Generate a random suffix for unique resource names
 resource "random_string" "suffix" {
   length  = 8
   special = false
   upper   = false
 }
 
+# Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
   tags     = var.tags
 }
 
+# Network Module
 module "network" {
   source              = "./modules/network"
   vnet_name           = var.vnet_name
   address_space       = var.address_space
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
-  subnet_name         = var.subnet_name
-  address_prefixes    = var.address_prefixes
+  aks_subnet_name     = var.aks_subnet_name
+  aks_address_prefixes = var.aks_address_prefixes
+  appgw_subnet_name   = var.appgw_subnet_name
+  appgw_address_prefixes = var.appgw_address_prefixes
   tags                = var.tags
 }
 
+# ACR Module
 module "acr" {
   source              = "./modules/acr"
   acr_name            = var.acr_name
   location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.rg.name  # Use the created RG
   sku                 = var.sku
   tags                = var.tags
 }
 
+# AKS Module
 module "aks" {
   source              = "./modules/aks"
   cluster_name        = var.cluster_name
   location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.rg.name  # Use the created RG
   dns_prefix          = "aks-${random_string.suffix.result}"
   node_count          = var.node_count
   vm_size             = var.vm_size
   service_cidr        = var.service_cidr
   dns_service_ip      = var.dns_service_ip
-  docker_bridge_cidr  = var.docker_bridge_cidr
+  aks_subnet_id       = module.network.aks_subnet_id     # Added for private networking
   tags                = var.tags
 }
 
-
-# NGINX Ingress Controller Helm Release
-resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  namespace  = "ingress-nginx"
-
-  create_namespace = true
-
-  values = [
-    file("helm-values.yaml")  # This is where we reference your helm-values.yaml
-  ]
+# Application Gateway Module
+module "appgw" {
+  source              = "./modules/appgw"
+  appgw_name          = var.appgw_name
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name  # Use the created RG
+  appgw_subnet_id     = module.network.appgw_subnet_id
 }
 
-
-
-output "kube_config" {
-  value = module.aks.kube_config
+# Role Assignment for AKS to pull from ACR
+resource "azurerm_role_assignment" "acr_pull" {
+  principal_id         = module.aks.kubelet_identity_object_id
+  role_definition_name = "AcrPull"
+  scope                = module.acr.acr_id
 }

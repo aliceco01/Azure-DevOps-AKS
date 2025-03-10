@@ -6,11 +6,13 @@ variable "subscription_id" {
 variable "resource_group_name" {
   description = "The name of the resource group"
   type        = string
+  default = "rg-aks-devops"
 }
 
 variable "location" {
   description = "The location of the resources"
   type        = string
+  default = "East US"
 }
 
 variable "tags" {
@@ -21,16 +23,19 @@ variable "tags" {
 variable "acr_name" {
   description = "The name of the Azure Container Registry"
   type        = string
+  default = "myacrdevops"
 }
 
 variable "sku" {
   description = "The SKU of the Azure Container Registry"
   type        = string
+  default = "Standard"
 }
 
 variable "vnet_name" {
   description = "The name of the Virtual Network"
   type        = string
+  default = "aks-vnet"
 }
 
 variable "address_space" {
@@ -76,4 +81,34 @@ variable "dns_service_ip" {
 variable "docker_bridge_cidr" {
   description = "The CIDR for the Docker bridge network"
   type        = string
+}
+
+variable "appgw_name" {
+  description = "Name of the Application Gateway"
+  type        = string
+  default     = "aks-appgw"
+}
+
+variable "aks_subnet_name" {
+  description = "Name of the AKS subnet"
+  type        = string
+  default     = "aks-subnet"
+}
+
+variable "aks_address_prefixes" {
+  description = "Address prefixes for the AKS subnet"
+  type        = list(string)
+  default     = ["10.0.1.0/24"]
+}
+
+variable "appgw_subnet_name" {
+  description = "Name of the Application Gateway subnet"
+  type        = string
+  default     = "appgw-subnet"
+}
+
+variable "appgw_address_prefixes" {
+  description = "Address prefixes for the Application Gateway subnet"
+  type        = list(string)
+  default     = ["10.0.2.0/24"]
 }

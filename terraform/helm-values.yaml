@@ -1,9 +1,0 @@
-controller:
-  service:
-    type: LoadBalancer
-    externalTrafficPolicy: Local
-
-replicaCount: 3
-image:
-  repository: nginx
-  tag: "latest"

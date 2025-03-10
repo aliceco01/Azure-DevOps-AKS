@@ -1,47 +1,44 @@
-
 resource "azurerm_virtual_network" "vnet" {
   name                = var.vnet_name
   address_space       = var.address_space
   location            = var.location
   resource_group_name = var.resource_group_name
-  tags = var.tags
+  tags                = var.tags
 }
 
-resource "azurerm_subnet" "subnet" {
-  name                 = var.subnet_name
+resource "azurerm_subnet" "aks_subnet" {
+  name                 = var.aks_subnet_name
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = var.address_prefixes
+  address_prefixes     = var.aks_address_prefixes
 
   delegation {
     name = "aks"
     service_delegation {
-      name = "Microsoft.ContainerService/managedClusters"
+      name    = "Microsoft.ContainerService/managedClusters"
       actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
     }
   }
 }
 
-output "subnet_id" {
-  value = azurerm_subnet.subnet.id
+resource "azurerm_subnet" "appgw_subnet" {
+  name                 = var.appgw_subnet_name
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = var.appgw_address_prefixes
 }
 
+output "vnet_id" {
+  description = "The ID of the Virtual Network"
+  value       = azurerm_virtual_network.vnet.id
+}
 
-resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  namespace  = "ingress-nginx"
+output "aks_subnet_id" {
+  description = "The ID of the AKS subnet"
+  value       = azurerm_subnet.aks_subnet.id
+}
 
-  create_namespace = true
-
-  set {
-    name  = "controller.service.type"
-    value = "LoadBalancer"
-  }
-
-  set {
-    name  = "controller.service.externalTrafficPolicy"
-    value = "Local"
-  }
+output "appgw_subnet_id" {
+  description = "The ID of the Application Gateway subnet"
+  value       = azurerm_subnet.appgw_subnet.id
 }

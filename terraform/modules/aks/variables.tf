@@ -1,49 +1,50 @@
 variable "cluster_name" {
-  description = "The name of the AKS cluster"
+  description = "Name of the AKS cluster"
   type        = string
 }
 
 variable "location" {
-  description = "The location of the AKS cluster"
+  description = "Azure region"
   type        = string
 }
 
 variable "resource_group_name" {
-  description = "The name of the resource group"
+  description = "Resource group name"
   type        = string
 }
 
 variable "dns_prefix" {
-  description = "The DNS prefix for the AKS cluster"
+  description = "DNS prefix for AKS"
   type        = string
 }
 
 variable "node_count" {
-  description = "The number of nodes in the default node pool"
+  description = "Number of nodes in the default node pool"
   type        = number
 }
 
 variable "vm_size" {
-  description = "The size of the VMs in the default node pool"
+  description = "VM size for AKS nodes"
+  type        = string
+}
+
+variable "aks_subnet_id" {
+  description = "Subnet ID for AKS"
   type        = string
 }
 
 variable "service_cidr" {
-  description = "The CIDR for the Kubernetes service network"
+  description = "Service CIDR for AKS"
   type        = string
 }
 
 variable "dns_service_ip" {
-  description = "The IP address of the DNS service"
-  type        = string
-}
-
-variable "docker_bridge_cidr" {
-  description = "The CIDR for the Docker bridge network"
+  description = "DNS service IP for AKS"
   type        = string
 }
 
 variable "tags" {
-  description = "A map of tags to assign to the resource"
+  description = "Tags for AKS resources"
   type        = map(string)
+  default     = {}
 }
