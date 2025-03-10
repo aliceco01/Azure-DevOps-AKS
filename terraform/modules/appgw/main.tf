@@ -27,10 +27,12 @@ resource "azurerm_application_gateway" "appgw" {
     port = 80
   }
 
-  frontend_ip_configuration {
-    name                 = "frontend-ip-config"
-    public_ip_address_id = azurerm_public_ip.appgw_pip.id  # Remove for private mode
-  }
+ frontend_ip_configuration {
+  name                          = "frontend-ip-config"
+  subnet_id                     = var.appgw_subnet_id
+  private_ip_address_allocation = "Dynamic"
+}
+
 
   # Optional: Remove public_ip_address_id and add private IP for fully private setup
   # frontend_ip_configuration {
@@ -64,6 +66,7 @@ resource "azurerm_application_gateway" "appgw" {
     http_listener_name         = "aks-listener"
     backend_address_pool_name  = "aks-backend-pool"
     backend_http_settings_name = "aks-http-settings"
+    priority = 1
   }
 
   # Enable WAF (optional, requires WAF SKU)
