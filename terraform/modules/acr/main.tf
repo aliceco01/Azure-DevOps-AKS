@@ -7,10 +7,7 @@ resource "azurerm_container_registry" "acr" {
   tags                = var.tags
 }
 
-output "login_server" {
-  description = "The login server URL of the Azure Container Registry"
-  value       = azurerm_container_registry.acr.login_server
-}
+
 
 output "acr_id" {
   description = "The ID of the Azure Container Registry"
