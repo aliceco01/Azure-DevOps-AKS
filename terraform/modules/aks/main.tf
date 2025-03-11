@@ -1,51 +1,58 @@
-resource "azurerm_kubernetes_cluster" "example" {
-  name                = var.aks_cluster_name
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = var.resource_group_name
+  location = var.location
+}
+
+module "network" {
+  source              = "./modules/network"
+  resource_group_name = azurerm_resource_group.rg.name
   location            = var.location
-  resource_group_name = var.resource_group_name
-  dns_prefix          = var.dns_prefix
+  vnet_name           = var.vnet_name
+  vnet_address_space  = var.vnet_address_space
+  aks_subnet_name     = var.aks_subnet_name
+  aks_subnet_prefix   = var.aks_subnet_prefix
+  appgw_subnet_name   = var.appgw_subnet_name
+  appgw_subnet_prefix = var.appgw_subnet_prefix
+}
 
-  default_node_pool {
-    name       = "default"
-    node_count = var.node_count
-    vm_size    = var.vm_size
-    vnet_subnet_id = var.aks_subnet_id
-  }
+module "acr" {
+  source              = "./modules/acr"
+  acr_name            = var.acr_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = var.location
+  tags                = var.tags
+  private_endpoint    = true
+}
 
-  identity {
-    type = "SystemAssigned"
-  }
+module "appgw" {
+  source              = "./modules/appgw"
+  appgw_name          = var.appgw_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = var.location
+  appgw_subnet_id     = module.network.appgw_subnet_id
+  ssl_certificate_password = var.ssl_certificate_password
+  tags                = var.tags
+}
 
-  network_profile {
-    network_plugin     = "azure"
-    network_policy     = "azure"
-    load_balancer_sku  = "standard"
-    outbound_type      = "userDefinedRouting"
-  }
-
+module "aks" {
+  source                     = "./modules/aks"
+  aks_cluster_name           = var.aks_cluster_name
+  resource_group_name        = azurerm_resource_group.rg.name
+  location                   = var.location
+  aks_subnet_id              = module.network.aks_subnet_id
+  admin_username             = var.admin_username
+  ssh_public_key             = var.ssh_public_key
+  client_id                  = var.client_id
+  client_secret              = var.client_secret
+  appgw_name                 = var.appgw_name
+  appgw_subnet_cidr          = var.appgw_subnet_prefix
   api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
-
-  role_based_access_control {
-   enabled = var.rbac_enabled
-  }
-
-  ingress_application_gateway {
-    enabled     = var.ingress_application_gateway_enabled
-    gateway_name = var.appgw_name
-    subnet_cidr = var.appgw_subnet_cidr
-  }
-
-  linux_profile {
-    admin_username = var.admin_username
-
-    ssh_key {
-      key_data = var.ssh_public_key
-    }
-  }
-
-  service_principal {
-    client_id     = var.client_id
-    client_secret = var.client_secret
-  }
-
-  tags = var.tags
+  rbac_enabled               = var.rbac_enabled
+  ingress_application_gateway_enabled = var.ingress_application_gateway_enabled
+  enable_private_cluster     = true
+  tags                       = var.tags
 }
