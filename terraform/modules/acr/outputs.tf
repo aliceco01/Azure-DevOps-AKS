@@ -1,18 +1,25 @@
 
+output "acr_id" {
+  description = "The ID of the Azure Container Registry"
+  value       = azurerm_container_registry.acr.id
+}
+
+output "acr_name" {
+  description = "The name of the Azure Container Registry"
+  value       = azurerm_container_registry.acr.name
+}
 
 output "login_server" {
   description = "The login server URL of the Azure Container Registry"
   value       = azurerm_container_registry.acr.login_server
 }
 
-output "admin_username" {
-  description = "The admin username for the Azure Container Registry (if admin_enabled = true)"
-  value       = azurerm_container_registry.acr.admin_username
-  sensitive   = true
+output "acr_identity_id" {
+  description = "The ID of the user-assigned identity for ACR"
+  value       = length(azurerm_user_assigned_identity.acr_identity) > 0 ? azurerm_user_assigned_identity.acr_identity[0].id : null
 }
 
-output "admin_password" {
-  description = "The admin password for the Azure Container Registry (if admin_enabled = true)"
-  value       = azurerm_container_registry.acr.admin_password
-  sensitive   = true
+output "acr_identity_principal_id" {
+  description = "The principal ID of the user-assigned identity for ACR"
+  value       = length(azurerm_user_assigned_identity.acr_identity) > 0 ? azurerm_user_assigned_identity.acr_identity[0].principal_id : null
 }

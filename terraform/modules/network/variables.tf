@@ -1,3 +1,4 @@
+
 variable "vnet_name" {
   description = "Name of the virtual network"
   type        = string
@@ -31,17 +32,14 @@ variable "aks_address_prefixes" {
 variable "appgw_subnet_name" {
   description = "Name of the Application Gateway subnet"
   type        = string
-  default     = "appgw-subnet"
 }
 
 variable "appgw_address_prefixes" {
   description = "Address prefixes for the Application Gateway subnet"
   type        = list(string)
-  default     = ["10.0.2.0/24"]
 }
 
 variable "tags" {
   description = "Tags for resources"
   type        = map(string)
-  default     = {}
 }
