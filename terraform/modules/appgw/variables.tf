@@ -18,13 +18,19 @@ variable "appgw_subnet_id" {
   type        = string
 }
 
-variable "ssl_certificate_password" {
-  description = "The password for the SSL certificate"
+variable "key_vault_id" {
+  description = "The ID of the Azure Key Vault storing the SSL certificate"
   type        = string
-  sensitive   = true
 }
 
 variable "tags" {
   description = "A map of tags to assign to the resources"
   type        = map(string)
 }
+
+
+variable "ssl_certificate_secret_id" {
+  description = "The secret ID of the SSL certificate stored in Azure Key Vault"
+  type        = string
+}
+

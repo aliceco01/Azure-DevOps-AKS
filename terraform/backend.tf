@@ -1,8 +1,9 @@
 terraform {
   backend "azurerm" {
-    resource_group_name   = "your-resource-group"
-    storage_account_name  = "yourstorageaccount"
-    container_name        = "tfstate"
+    resource_group_name   = "aks-pipeline-rg"
+    storage_account_name  = "akspipelinestorage"
+    container_name        = "terraform-state"
     key                   = "terraform.tfstate"
+    
   }
 }

@@ -53,6 +53,11 @@ variable "appgw_name" {
   type        = string
 }
 
+variable "appgw_id" {
+  description = "The ID of the Azure Application Gateway"
+  type        = string
+}
+
 variable "appgw_subnet_cidr" {
   description = "The CIDR block of the Application Gateway subnet"
   type        = string
@@ -82,4 +87,9 @@ variable "client_secret" {
 variable "tags" {
   description = "A map of tags to assign to the resources"
   type        = map(string)
+}
+
+variable "enable_private_cluster" {
+  description = "Enable private cluster for AKS"
+  type        = bool
 }

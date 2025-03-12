@@ -55,11 +55,10 @@ resource "azurerm_application_gateway" "appgw" {
     ssl_certificate_name           = "appgw-cert"
   }
 
-  ssl_certificate {
-    name     = "appgw-cert"
-    data     = filebase64("${path.module}/certs/appgw-cert.pfx")
-    password = var.ssl_certificate_password
-  }
+ssl_certificate {
+  name                = "appgw-cert"
+  key_vault_secret_id = var.ssl_certificate_secret_id
+}
 
   request_routing_rule {
     name                       = "http-rule"

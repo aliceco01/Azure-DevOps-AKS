@@ -99,3 +99,23 @@ variable "ingress_application_gateway_enabled" {
   description = "Whether the ingress application gateway is enabled"
   type        = bool
 }
+
+variable "dns_prefix" {
+  description = "The DNS prefix for the Kubernetes cluster"
+  type        = string
+}
+
+variable "node_count" {
+  description = "The number of nodes in the default node pool"
+  type        = number
+}
+
+variable "vm_size" {
+  description = "The size of the VMs in the default node pool"
+  type        = string
+}
+
+variable "enable_private_cluster" {
+  description = "Enable private cluster for AKS"
+  type        = bool
+}
