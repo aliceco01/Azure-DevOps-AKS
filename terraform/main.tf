@@ -53,7 +53,8 @@ module "appgw" {
   location                  = var.location
   appgw_subnet_id           = module.network.appgw_subnet_id
   key_vault_id              = azurerm_key_vault.aks_pipeline_keyvault.id
-  ssl_certificate_secret_id = data.azurerm_key_vault_certificate.appgw_cert.secret_id  # ✅ Fix applied
+  ssl_certificate_password   = var.ssl_certificate_password
+  ssl_certificate_secret_id = data.azurerm_key_vault_certificate.appgw_cert.secret_id 
   tags                      = var.tags
 }
 

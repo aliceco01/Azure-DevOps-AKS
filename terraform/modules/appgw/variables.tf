@@ -34,3 +34,11 @@ variable "ssl_certificate_secret_id" {
   type        = string
 }
 
+variable "ssl_certificate_password" {
+  description = "The password for the SSL certificate"
+  type        = string
+  sensitive   = true
+}
+
+
+

@@ -119,3 +119,17 @@ variable "enable_private_cluster" {
   description = "Enable private cluster for AKS"
   type        = bool
 }
+variable "key_vault_id" {
+  description = "The ID of the Azure Key Vault"
+  type        = string
+}
+
+variable "ssl_certificate_secret_id" {
+  description = "The Secret ID of the SSL certificate in Key Vault"
+  type        = string
+}
+
+
+
+
+
