@@ -195,12 +195,4 @@ spec:
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## References
-
-- [AKS Documentation](https://docs.microsoft.com/en-us/azure/aks/)
-- [Application Gateway Documentation](https://docs.microsoft.com/en-us/azure/application-gateway/)
-- [AGIC Documentation](https://docs.microsoft.com/en-us/azure/application-gateway/ingress-controller-overview)
