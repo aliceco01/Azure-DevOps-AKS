@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/199206ae-f86e-4186-a940-ccb7d2ba8ed7)# AKS Cluster with Application Gateway Ingress Controller
+# AKS Cluster with Application Gateway Ingress Controller
 
 [![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fyour-repo%2Fmain%2Fdeploy.json)
 [![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fyour-repo%2Fmain%2Fdeploy.json)
